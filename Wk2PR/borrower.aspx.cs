@@ -13,22 +13,74 @@ namespace SWDV_PR2
         {
 
         }
+        protected void gvBorrowers_PreRender(object sender, EventArgs e)
+        {
+            gvBorrowers.HeaderRow.TableSection = TableRowSection.TableHeader;
+        }
+
+        protected void gvBorrowers_RowUpdated(object sender, GridViewUpdatedEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                lblError.Text = DatabaseErrorMessage(e.Exception.Message);
+                e.ExceptionHandled = true;
+            }
+            else if (e.AffectedRows == 0)
+            {
+                lblError.Text = ConcurrencyErrorMessage();
+            }
+        }
+
+        protected void gvBorrowers_RowDeleted(object sender, GridViewDeletedEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                lblError.Text = DatabaseErrorMessage(e.Exception.Message);
+                e.ExceptionHandled = true;
+            }
+            else if (e.AffectedRows == 0)
+            {
+                lblError.Text = ConcurrencyErrorMessage();
+            }
+        }
         //Submit Button to submit and clear form
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            lblMessage.Text = "Thank you for submitting your info.";
-            txtFName.Text = "";
-            txtLName.Text = "";
-            txtPhone.Text = "";
+            if (IsValid)
+            {
+                var parameters = insertBorrowerForm.InsertParameters;
+                parameters["borrower_first_name"].DefaultValue = txtFirstName.Text;
+                parameters["borrower_last_name"].DefaultValue = txtLastName.Text;
+                parameters["borrower_phone_number"].DefaultValue = txtPhoneNumber.Text;
+
+                try
+                {
+                    insertBorrowerForm.Insert();
+                    txtFirstName.Text = "";
+                    txtLastName.Text = "";
+                    txtPhoneNumber.Text = "";
+                    gvBorrowers.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    lblError.Text = DatabaseErrorMessage(ex.Message);
+                }
+            }
         }
 
-        //Clear button to clear all fields and message field
         protected void btnClear_Click(object sender, EventArgs e)
         {
-            txtFName.Text = "";
-            txtLName.Text = "";
-            txtPhone.Text = "";
-            lblMessage.Text = "";
+            txtFirstName.Text = "";
+            txtLastName.Text = "";
+            txtPhoneNumber.Text = "";
+        }
+        private string DatabaseErrorMessage(string errorMsg)
+        {
+            return $"<b>A database error has occurred:</b> {errorMsg}";
+        }
+        private string ConcurrencyErrorMessage()
+        {
+            return "Another user may have updated that artist. Please try again";
         }
     }
 }

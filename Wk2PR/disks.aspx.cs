@@ -11,7 +11,6 @@ namespace SWDV_PR2
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
         protected void gvDisks_PreRender(object sender, EventArgs e)
@@ -76,6 +75,27 @@ namespace SWDV_PR2
             txtDiskName.Text = "";
             txtDiskGenre.Text = "";
             txtReleaseDate.Text = "";
+        }
+
+        protected void btnCheckoutSubmit_Click(object sender, EventArgs e)
+        {
+                if (IsValid)
+                {
+                    var parameters = dsCheckoutSubmit.InsertParameters;
+                    parameters["disk_name"].DefaultValue = ddlCheckoutDisk.SelectedValue;
+                    parameters["borrowerName"].DefaultValue = ddlCheckoutBorrower.SelectedValue;
+                    parameters["borrowed_date"].DefaultValue = txtCheckoutDate.Text;
+
+                    try
+                    {
+                        dsCheckoutSubmit.Insert();
+                        grReport.DataBind();
+                    }
+                    catch (Exception ex)
+                    {
+                        lblError.Text = DatabaseErrorMessage(ex.Message);
+                    }
+                }
         }
     }
 }

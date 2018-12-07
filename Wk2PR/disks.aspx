@@ -150,6 +150,7 @@
                 </div>
             </div>
         </div>
+        <!-- Check out a disk form -->
         <div class="form-group col-sm-6">
             <h3>To check out a disk, fill out the form below.</h3>
             <asp:ValidationSummary ID="vsCheckout" runat="server" HeaderText="Please correct these entries:" CssClass="text-danger"/>
@@ -216,7 +217,7 @@
             </div>
         </div>
                 <div class="col-sm-12 table-responsive">
-            <!-- Display the disk data currently in the table -->
+            <!-- Display the disk data for checked out disks -->
             <asp:GridView ID="grReport"
                 runat="server"
                 AllowPaging="True"
@@ -250,7 +251,10 @@
                 <PagerStyle CssClass="pagerStyle" BackColor="#a8c8c8c" HorizontalAlign="Center" />
                 <EditRowStyle CssClass="warning" />
             </asp:GridView>
-                    <asp:SqlDataSource ID="gridCheckedOutReport" runat="server" ConnectionString="<%$ ConnectionStrings:disk_inventoryConnectionString %>" SelectCommand="SELECT [Disk].disk_name, DiskHasBorrower.borrowed_date, BorrowerInfo.borrower_first_name, BorrowerInfo.borrower_last_name, Status.status FROM DiskHasBorrower INNER JOIN BorrowerInfo ON DiskHasBorrower.borrower_ID = BorrowerInfo.borrower_ID INNER JOIN [Disk] ON DiskHasBorrower.disk_ID = [Disk].disk_ID INNER JOIN Status ON [Disk].status_ID = Status.status_ID WHERE (Status.status_ID = 1)"></asp:SqlDataSource>
+            <asp:SqlDataSource ID="gridCheckedOutReport"
+                runat="server"
+                ConnectionString="<%$ ConnectionStrings:disk_inventoryConnectionString %>"
+                SelectCommand="SELECT [Disk].disk_name, DiskHasBorrower.borrowed_date, BorrowerInfo.borrower_first_name, BorrowerInfo.borrower_last_name, Status.status FROM DiskHasBorrower INNER JOIN BorrowerInfo ON DiskHasBorrower.borrower_ID = BorrowerInfo.borrower_ID INNER JOIN [Disk] ON DiskHasBorrower.disk_ID = [Disk].disk_ID INNER JOIN Status ON [Disk].status_ID = Status.status_ID WHERE (Status.status_ID = 1)"></asp:SqlDataSource>
             <asp:SqlDataSource 
                 ID="SqlDataSource1" 
                 runat="server" 
@@ -272,7 +276,6 @@
                     <asp:Parameter Name="status" Type="string"></asp:Parameter>
                 </UpdateParameters>
             </asp:SqlDataSource>
-            <asp:Label ID="Label1" runat="server"></asp:Label>
         </div>
     </div>
 </asp:Content>
